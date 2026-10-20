@@ -1,25 +1,74 @@
 
-# spells.py
-
 spells = {
+
+    # ==========================================
+    # MAGE SPELLS
+    # ==========================================
+
     "Fireball": {
         "type": "attack",
         "damage": (2, 8),
-        "element": "fire"
+        "element": "fire",
+        "stat": "intelligence"
     },
 
-    "Healing Light": {
+    "Ice Bolt": {
+        "type": "attack",
+        "damage": (2, 6),
+        "element": "ice",
+        "stat": "intelligence"
+    },
+
+    # ==========================================
+    # PALADIN / CLERIC SPELLS
+    # ==========================================
+
+    "Holy Light": {
+        "type": "heal",
+        "amount": (3, 8)
+    },
+
+    "Heal": {
         "type": "heal",
         "amount": (2, 8)
     },
 
-    "Flame Shield": {
-        "type": "resistance",
-        "element": "fire"
+    # ==========================================
+    # RANGER SPELLS
+    # ==========================================
+
+    "Nature's Mark": {
+        "type": "buff",
+        "effect": "nature_mark"
     },
 
-    "Life Drain": {
-        "type": "lifesteal",
-        "damage": (2, 6)
+    # ==========================================
+    # BARD SPELLS
+    # ==========================================
+
+    "Charm": {
+        "type": "utility",
+        "effect": "charm"
+    },
+
+    "Inspire": {
+        "type": "buff",
+        "effect": "inspire"
+    },
+
+    # ==========================================
+    # WARLOCK SPELLS
+    # ==========================================
+
+    "Dark Bolt": {
+        "type": "attack",
+        "damage": (2, 8),
+        "element": "dark",
+        "stat": "intelligence"
+    },
+
+    "Curse": {
+        "type": "buff",
+        "effect": "curse"
     }
 }
