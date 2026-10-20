@@ -28,17 +28,17 @@ class Enemy:
             print(f"{self.name} has been defeated!")
 
 
-player = Player(
-    "Drake",
-    races["Dragonborn"],
-    jobs["Paladin"]
-)
+# player = Player(
+#     "Drake",
+#     races["Dragonborn"],
+#     jobs["Paladin"]
+# )
 
-player.equipped["weapon"] = {
-    "name": "Iron Sword",
-    "damage": (1, 8),
-    "stat": "strength"
-}
+# player.equipped["weapon"] = {
+#     "name": "Iron Sword",
+#     "damage": (1, 8),
+#     "stat": "strength"
+# }
 
 goblin = Enemy(
     "Goblin",
@@ -48,4 +48,20 @@ goblin = Enemy(
     xp_reward=25
 )
 
-start_combat(player, goblin)
+# start_combat(player, goblin)
+
+
+from player import Player
+from races import races
+from jobs import jobs
+
+mage = Player(
+    "Merlin",
+    races["Human"],
+    jobs["Mage"]
+)
+
+mage.show_stats()
+
+
+mage.spellcast("Fireball", goblin)

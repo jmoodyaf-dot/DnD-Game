@@ -3,6 +3,8 @@ import random as r
 
 from abilities import abilities
 from racial_abilities import racial_abilities
+from spells import spells
+
 
 
 class Player:
@@ -204,10 +206,17 @@ class Player:
             weapon["damage"][1]
         )
 
-        damage = max(
-            0,
-            damage_roll + modifier + self.bonus_damage
-        )
+        damage = damage_roll + modifier + self.bonus_damage
+
+        if getattr(target, "marked_by", None) is self:
+            damage += 3
+            print("Nature's Mark adds 3 bonus damage!")
+
+        if getattr(self, "cursed", False):
+            damage = max(0, damage - 2)
+            print("Curse reduces your damage by 2!")
+        
+        damage = max(0, damage)
 
         print(
             f"{self.name} hits {target.name} "
@@ -319,7 +328,27 @@ class Player:
         elif ability_type == "buff":
 
             effect = ability_data["effect"]
-            self.apply_buff(effect, ability)
+
+            if effect in ("curse", "nature_mark"):
+                if target is None:
+                    print("You need a target!")
+                    return
+
+                if target.hp <= 0:
+                    print(f"{target.name} is already defeated!")
+                    return
+
+                if effect == "curse":
+                    target.cursed = True
+                    print(f"{target.name} is cursed!")
+
+                elif effect == "nature_mark":
+                    target.marked_by = self
+                    print(f"{self.name} marks {target.name} with nature magic!")
+
+            else:
+                self.apply_buff(effect, ability)
+
 
         # Resistance abilities
         elif ability_type == "resistance":
@@ -338,7 +367,21 @@ class Player:
         elif ability_type == "utility":
 
             effect = ability_data["effect"]
-            self.apply_utility(effect, ability)
+
+            if effect == "charm":
+                if target is None:
+                    print("You need a target!")
+                    return
+
+                if target.hp <= 0:
+                    print(f"{target.name} is already defeated!")
+                    return
+
+                target.charmed = True
+                print(f"{target.name} is charmed!")
+
+            else:
+                self.apply_utility(effect, ability)
 
         else:
             print(f"Unknown ability type: {ability_type}")
@@ -411,6 +454,12 @@ class Player:
         elif effect == "predator":
             print("Your predatory instincts awaken!")
 
+        elif effect == "curse":
+            print("Curse must be applied to a target.")
+
+        elif effect == "nature_mark":
+            print("Nature's Mark must be applied to a target.")
+
         else:
             print(f"{ability} activates: {effect}!")
 
@@ -480,15 +529,23 @@ class Player:
     # SPELLCASTING
     # ==============================================
 
-    def spellcast(self, spell):
-
+    def spellcast(self, spell, target=None):
+         # Check whether the character knows this spell.
         if spell not in self.spells:
             print(f"{self.name} doesn't know {spell}!")
             return
 
-        # Spells are still message-only until a spell
-        # definition dictionary is added.
-        print(f"{self.name} casts {spell}!")
+        # Find the spell's definition.
+        spell_data = spells.get(spell)
+
+        if spell_data is None:
+            print(f"No data exists for spell: {spell}")
+            return
+
+        # Execute the spell using the shared ability system.
+        self.execute_ability(spell, spell_data, target)
+
+      
 
     # ==============================================
     # INVENTORY

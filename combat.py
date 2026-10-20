@@ -92,8 +92,24 @@ def cast_selected_spell(player, enemy, spell):
 
         player.execute_ability(spell, spell_info, enemy)
 
-    elif spell_type in ("heal", "buff", "resistance", "utility"):
+    
+    elif spell_type == "heal":
         player.execute_ability(spell, spell_info)
+
+    elif spell_type in ("buff", "utility", "resistance"):
+        effect = spell_info.get("effect")
+
+        # These spells affect the enemy.
+        if effect in ("charm", "curse", "nature_mark"):
+            if enemy.hp <= 0:
+                print("There is no enemy to target!")
+                return False
+
+            player.execute_ability(spell, spell_info, enemy)
+
+        else:
+            player.execute_ability(spell, spell_info)
+
 
     else:
         print(f"Unknown spell type: {spell_type}")
@@ -176,19 +192,30 @@ def start_combat(player, enemy):
         if enemy.hp <= 0:
             break
 
+        
+        
         # ENEMY TURN
         print("\n" + "-" * 30)
         print(f"{enemy.name.upper()}'S TURN")
         print("-" * 30)
 
-        damage = getattr(enemy, "damage", 5)
+        if getattr(enemy, "charmed", False):
+            print(f"{enemy.name} is charmed and cannot attack!")
 
-        print(f"{enemy.name} attacks for {damage} damage!")
-        player.take_damage(damage)
+            # Charm wears off after preventing one attack.
+            enemy.charmed = False
+            print(f"{enemy.name} is no longer charmed.")
+
+        else:
+            damage = getattr(enemy, "damage", 5)
+
+            print(f"{enemy.name} attacks for {damage} damage!")
+            player.take_damage(damage)
 
         if player.hp <= 0:
             print(f"\n{player.name} has been defeated!")
             return
+
 
     # VICTORY
     if enemy.hp <= 0:
